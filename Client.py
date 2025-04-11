@@ -20,12 +20,15 @@ class ChatClient:
     receiving_socket = socket.socket()
     screen_name = ""
 
-    def __init__(self):
+    def __init__(self, ifTesting=False):
         """This fucntion will make an instance of a client
 
         it will make a reciving socka and a sending sock and start a thread
         for each of them to do their thing
         """
+
+        if ifTesting:
+            return
 
         self.get_screen_name()
 

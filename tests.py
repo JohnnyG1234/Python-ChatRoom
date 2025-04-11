@@ -1,17 +1,23 @@
 import unittest
+import Client
+import server
 
-def add(x, y):
-    return x + y
+class TestScreenName(unittest.TestCase):
+    def test_invalid_name_1(self):
+        client = Client.ChatClient(True)
+        self.assertFalse(client.check_screen_name("Jimmy Dean"))
 
-class TestAdd(unittest.TestCase):
-    def test_add_positive_numbers(self):
-        self.assertEqual(add(2, 3), 5)
-
-    def test_add_negative_numbers(self):
-        self.assertEqual(add(-1, -1), -2)
-
-    def test_add_mixed_numbers(self):
-        self.assertEqual(add(5, -2), 3)
+    def test_invalid_name_2(self):
+        client = Client.ChatClient(True)
+        self.assertFalse(client.check_screen_name(""))
+    
+    def test_valid_name_1(self):
+        client = Client.ChatClient(True)
+        self.assertTrue(client.check_screen_name("Jimmy_Dean"))
+    
+    def test_valid_name_2(self):
+        client = Client.ChatClient(True)
+        self.assertTrue(client.check_screen_name("XX_TH3R0CK3R_XX"))
 
 if __name__ == '__main__':
     unittest.main()
