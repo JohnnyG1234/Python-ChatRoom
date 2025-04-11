@@ -138,6 +138,8 @@ class ChatClient:
 
         if not screen_name:
             return False
+        
+        return  True
 
     def unpack_message(self, message):
         """This will decode and make a json message into a python object"""
