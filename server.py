@@ -9,12 +9,13 @@ ERROR = 'Message format error'
 USER_JOINED = ' has joined the chat'
 
 
-class ChatSever:
+class ChatServer:
     """This server will hold a list of clients and send messages back and forht between them"""
 
     reading_sock = socket.socket()
     writing_sock = socket.socket()
     client_list = []
+    _should_run = True
 
     def __init__(self):
         """This funciton will make an instance of the server
@@ -37,9 +38,11 @@ class ChatSever:
     def reading(self):
         """this function will start a new thread after reciving a connection"""
 
-        while True:
+        while self._should_run:
             client_sock, address = self.reading_sock.accept()
             threading.Thread(target=self.handle_chat, args=(client_sock,)).start()
+
+        self.reading_sock.close()
 
     def handle_chat(self, client_sock):
         """This will handle a chat from one client
@@ -48,7 +51,7 @@ class ChatSever:
         according to the message it got
         """
 
-        while True:
+        while self._should_run:
             length_bytes = client_sock.recv(4)
             length = int.from_bytes(length_bytes, "big")
             data = self.recv_all(length, client_sock)
@@ -94,10 +97,12 @@ class ChatSever:
                         clients[1].sendall(final)
                         break
 
+        client_sock.close()
+
     def writing(self):
         """This will acepts new connections from clients and send out a welcome message"""
 
-        while True:
+        while self._should_run:
             client_sock, address = self.writing_sock.accept()
 
             length_bytes = client_sock.recv(4)
@@ -118,6 +123,8 @@ class ChatSever:
 
             for clients in self.client_list:
                 clients[1].sendall(new_user_message)
+                
+        self.writing_sock.close()
 
     def recv_all(self, length, client_sock):
         """this function receives the amount of data given"""
@@ -132,8 +139,11 @@ class ChatSever:
                 raise EOFError
             data += more
         return data
+    
+    def shutdown(self):
+        self._should_run = False
 
 
 if __name__ == '__main__':
-    server = ChatSever()
+    server = ChatServer()
 
