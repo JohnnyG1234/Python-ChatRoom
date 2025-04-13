@@ -3,29 +3,20 @@ import client
 import server
 
 class TestScreenName(unittest.TestCase):
+    test_server = server.ChatServer()
+    test_client = client.ChatClient("test1")
+
     def test_invalid_name_1(self):
-        test_server = server.ChatServer()
-        test_client = client.ChatClient("test")
-        self.assertFalse(test_client.check_screen_name("Jimmy Dean"))
-        test_server.shutdown()
+        self.assertFalse(self.test_client.check_screen_name("Jimmy Dean"))
         
     def test_invalid_name_2(self):
-        test_server = server.ChatServer()
-        test_client = client.ChatClient("test")
-        self.assertFalse(test_client.check_screen_name(""))
-        test_server.shutdown()
+        self.assertFalse(self.test_client.check_screen_name(""))
     
     def test_valid_name_1(self):
-        test_server = server.ChatServer()
-        test_client = client.ChatClient("test")
-        self.assertTrue(test_client.check_screen_name("Jimmy_Dean"))
-        test_server.shutdown()
+        self.assertTrue(self.test_client.check_screen_name("Jimmy_Dean"))
     
     def test_valid_name_2(self):
-        test_server = server.ChatServer()
-        test_client = client.ChatClient("test")
-        self.assertTrue(test_client.check_screen_name("XX_K3WLDUD3_XX"))
-        test_server.shutdown()
+        self.assertTrue(self.test_client.check_screen_name("XX_K3WLDUD3_XX"))
 
 if __name__ == '__main__':
     unittest.main()

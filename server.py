@@ -120,7 +120,7 @@ class ChatServer:
             length = len(encoded_back)
             length_bytes = length.to_bytes(4, 'big')
             new_user_message = length_bytes + encoded_back
-
+            
             for clients in self.client_list:
                 clients[1].sendall(new_user_message)
                 
