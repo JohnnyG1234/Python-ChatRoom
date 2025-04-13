@@ -2,6 +2,8 @@ import json
 import socket
 import threading
 
+from helperfunctions import recv_all, recv_message
+
 HOST = 'localhost'  # IP of server
 WRITING_PORT = 7778
 READING_PORT = 7779
@@ -35,6 +37,8 @@ class ChatServer:
         threading.Thread(target=self.writing, args=()).start()
         threading.Thread(target=self.reading, args=()).start()
 
+        print(f'Server running at {HOST}')
+
     def reading(self):
         """this function will start a new thread after reciving a connection"""
 
@@ -52,11 +56,7 @@ class ChatServer:
         """
 
         while self._should_run:
-            length_bytes = client_sock.recv(4)
-            length = int.from_bytes(length_bytes, "big")
-            data = self.recv_all(length, client_sock)
-            data_decoded = data.decode('utf-8')
-            message = json.loads(data_decoded)
+            message = recv_message(client_sock=client_sock)
 
             if message[0] == "BROADCAST":
                 send_back = message[1] + ": " + message[2]
@@ -105,12 +105,7 @@ class ChatServer:
         while self._should_run:
             client_sock, address = self.writing_sock.accept()
 
-            length_bytes = client_sock.recv(4)
-            length = int.from_bytes(length_bytes, "big")
-            data = self.recv_all(length, client_sock)
-
-            data_decoded = data.decode()
-            message = json.loads(data_decoded)
+            message = recv_message(client_sock=client_sock)
             self.client_list.append((message[1], client_sock))
 
             send_back = message[1] + USER_JOINED
@@ -126,19 +121,6 @@ class ChatServer:
                 
         self.writing_sock.close()
 
-    def recv_all(self, length, client_sock):
-        """this function receives the amount of data given"""
-
-        data = b''
-        while len(data) < length:
-            more = client_sock.recv(length - len(data))
-            if not more:
-                return_length = len(ERROR.encode("utf-8"))
-                error_message = return_length.to_bytes(4, "big") + ERROR.encode("utf-8")
-                client_sock.sendall(error_message)
-                raise EOFError
-            data += more
-        return data
     
     def shutdown(self):
         self._should_run = False

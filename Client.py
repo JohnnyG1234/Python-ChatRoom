@@ -3,6 +3,8 @@ import json
 import threading
 import sys
 
+from helperfunctions import recv_all, recv_message
+
 HOST = 'localhost'  # IP of server
 WRITING_PORT = 7778         # Port of server
 READING_PORT = 7779
@@ -19,6 +21,7 @@ class ChatClient:
     sending_sock = socket.socket()
     receiving_socket = socket.socket()
     screen_name = ""
+    is_connected = False
 
     def __init__(self, screen_name=None):
         """This fucntion will make an instance of a client
@@ -31,10 +34,26 @@ class ChatClient:
             self.get_screen_name()
             
         self.receiving_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.receiving_socket.connect((HOST, WRITING_PORT))
+        
+        try:
+            self.receiving_socket.connect((HOST, WRITING_PORT))
+        except Exception as e:
+            print("Connection failed:", e)
+            self.is_connected = False
+        else:
+            self.is_connected = True
+            print("Connection established to writing port")
+
 
         self.sending_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sending_sock.connect((HOST, READING_PORT))
+        try:
+            self.sending_sock.connect((HOST, READING_PORT))
+        except Exception as e:
+            self.is_connected = False
+            print("Connection failed:", e)
+        else:
+            self.is_connected = True
+            print("Connection established to reading port.")
 
         threading.Thread(target=self.receiving, args=()).start()
         threading.Thread(target=self.sending, args=()).start()
@@ -91,6 +110,7 @@ class ChatClient:
                 message = byte_size + encoded
                 self.sending_sock.sendall(message)
 
+
     def receiving(self):
         """This will handle receiving starting a connection with the server
 
@@ -109,12 +129,7 @@ class ChatClient:
         self.receiving_socket.sendall(message)
 
         while True:
-
-            byte_size = self.receiving_socket.recv(4)
-            length = int.from_bytes(byte_size, "big")
-
-            data = self.recv_all(length, self.receiving_socket)
-            message = self.unpack_message(data)
+            message = recv_message(client_sock=self.receiving_socket)
             if (message == "Closing"):
                 print(message)
                 return
