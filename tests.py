@@ -4,7 +4,7 @@ import server
 
 class TestScreenName(unittest.TestCase):
     test_server = server.ChatServer()
-    test_client = client.ChatClient("test1")
+    test_client = client.ChatClient("test")
 
     def test_invalid_name_1(self):
         self.assertFalse(self.test_client.check_screen_name("Jimmy Dean"))

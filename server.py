@@ -82,7 +82,7 @@ class ChatServer:
                     if clients[0] == message[1]:
                         clients[1].sendall(final)
                         break
-                break
+                return
             elif message[0] == "PRIVATE":
                 send_back = message[1] + " (private): " + message[2]
                 json_back = json.dumps(send_back)
