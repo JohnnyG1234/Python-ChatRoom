@@ -56,7 +56,7 @@ class ChatServer:
         """
 
         while self._should_run:
-            message = recv_message(client_sock=client_sock)
+            message = recv_message(client_sock)
 
             if message[0] == "BROADCAST":
                 send_back = message[1] + ": " + message[2]
@@ -105,7 +105,7 @@ class ChatServer:
         while self._should_run:
             client_sock, address = self.writing_sock.accept()
 
-            message = recv_message(client_sock=client_sock)
+            message = recv_message(client_sock)
             self.client_list.append((message[1], client_sock))
 
             send_back = message[1] + USER_JOINED

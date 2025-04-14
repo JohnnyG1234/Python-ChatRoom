@@ -3,7 +3,7 @@ import json
 import threading
 import sys
 
-from helperfunctions import recv_all, recv_message
+from helperfunctions import recv_message, send_message
 
 HOST = 'localhost'  # IP of server
 WRITING_PORT = 7778         # Port of server
@@ -118,18 +118,11 @@ class ChatClient:
         and printing those messages to the screen
         """
 
-        start = ["START", self.screen_name]
-        json_start = json.dumps(start)
-        encoded = json_start.encode('utf-8')
-
-        size = len(encoded)
-        size_bytes = size.to_bytes(4, 'big')
-        message = size_bytes + encoded
-
-        self.receiving_socket.sendall(message)
+        start_msg = ["START", self.screen_name]
+        send_message(self.receiving_socket, start_msg)
 
         while True:
-            message = recv_message(client_sock=self.receiving_socket)
+            message = recv_message(self.receiving_socket)
             if (message == "Closing"):
                 print(message)
                 return
