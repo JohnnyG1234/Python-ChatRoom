@@ -45,11 +45,12 @@ Here is an example run from the clients perspective
    `Process finished with exit code 0`
 
 
+The Protocol
 
-Additional info:
+The basic protocol that this program will follow is sending UTF-8 encoded JSON messages over TCP sockets prefixed by the message length (complete length of JSON message) encoded as 4 byte unsigned integers
 
-- The server has two ports both under the "localhost" host name
-- The writing port is 7778, and the reading port is 7779
-- Private messages with no content (for example if input == "") will not be accepted as that causes an exception
-- Broadcast with no message is ok though
-- Network programming is pretty cool
+
+    START: This message announces the connection of a chat client to the server. It will include the screen name of the client who is joining.
+    BROADCAST: This message contains text that should be sent to every client connected to the chat server. It will include the screen name of the sender and the text of the message.
+    PRIVATE: This message contains text that should be sent only to a single client connected to the chat server. It will include the screen name of the sender, the screen name of the intended recipient, and the text of the message.
+    EXIT: This message announces the disconnection of a chat client from the server. It will include the screen name of the client who is leaving.
