@@ -2,7 +2,7 @@ import json
 import socket
 import threading
 
-from helperfunctions import recv_all, recv_message
+from helperfunctions import recv_message, send_message
 
 HOST = 'localhost'  # IP of server
 WRITING_PORT = 7778
@@ -59,16 +59,7 @@ class ChatServer:
             message = recv_message(client_sock)
 
             if message[0] == "BROADCAST":
-                send_back = message[1] + ": " + message[2]
-                json_back = json.dumps(send_back)
-                encoded = json_back.encode('utf-8')
-
-                length = len(encoded)
-                length_bytes = length.to_bytes(4, 'big')
-                final = length_bytes + encoded
-
-                for clients in self.client_list:
-                    clients[1].sendall(final)
+                self.broadcast(message)
             elif message[0] == "EXIT":
                 send_back = "Closing"
                 json_back = json.dumps(send_back)
@@ -124,6 +115,12 @@ class ChatServer:
     
     def shutdown(self):
         self._should_run = False
+
+    def broadcast(self, message):
+        send_back = message[1] + ": " + message[2]
+
+        for clients in self.client_list:
+            send_message(clients[1], send_back)
 
 
 if __name__ == '__main__':
