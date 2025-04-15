@@ -27,12 +27,13 @@ class ChatServer:
         """
 
         self.reading_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.reading_sock.bind((HOST, READING_PORT))
-        self.reading_sock.listen()
-
         self.writing_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.writing_sock.bind((HOST, WRITING_PORT))
-        self.writing_sock.listen()
+
+
+        if not ChatServer.bind(self.reading_sock, HOST, READING_PORT)  or not ChatServer.bind(self.writing_sock, HOST, WRITING_PORT):
+            print("Failed to bind")
+            return
+        
 
         threading.Thread(target=self.writing, args=()).start()
         threading.Thread(target=self.reading, args=()).start()
@@ -121,6 +122,19 @@ class ChatServer:
 
         for clients in self.client_list:
             send_message(clients[1], send_back)
+
+    @staticmethod
+    def bind(sock, host, port) -> bool:
+        """binds a sock to a host and port and gets ready for connections, returns bool representing if bind was succesfull"""
+        try:
+            sock.bind((host, port))
+            sock.listen()
+        except socket.error as e:
+            return False
+
+        return True
+
+
 
 
 if __name__ == '__main__':

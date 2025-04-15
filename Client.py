@@ -4,7 +4,6 @@ import threading
 import sys
 
 from helperfunctions import recv_message, send_message
-
 HOST = 'localhost'  # IP of server
 WRITING_PORT = 7778         # Port of server
 READING_PORT = 7779
@@ -34,26 +33,13 @@ class ChatClient:
             self.get_screen_name()
             
         self.receiving_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
-        try:
-            self.receiving_socket.connect((HOST, WRITING_PORT))
-        except Exception as e:
-            print("Connection failed:", e)
-            self.is_connected = False
-        else:
-            self.is_connected = True
-            print("Connection established to writing port")
-
-
         self.sending_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            self.sending_sock.connect((HOST, READING_PORT))
-        except Exception as e:
-            self.is_connected = False
-            print("Connection failed:", e)
-        else:
-            self.is_connected = True
-            print("Connection established to reading port.")
+
+        self.is_connected = ChatClient.connect(self.receiving_socket, HOST, WRITING_PORT) and ChatClient.connect(self.sending_sock, HOST, READING_PORT)
+
+        if not self.is_connected:
+            print("failed to connect to server")
+            return
 
         threading.Thread(target=self.receiving, args=()).start()
         threading.Thread(target=self.sending, args=()).start()
@@ -140,7 +126,7 @@ class ChatClient:
 
     def check_screen_name(self, screen_name):
         """This checks if a given screen name is valid"""
-
+        # TODO: Make  sure no other users  have  the same screen name
         for c in screen_name:
             if c == " ":
                 return False
@@ -170,6 +156,18 @@ class ChatClient:
                 raise EOFError
             data += more
         return data
+
+    @staticmethod
+    def connect(sock, host, port) -> bool:
+        """Connects a socket to another socket, returns true on success and False on a failure"""
+        try:
+            sock.connect((host, port))
+        except Exception as e:
+            print("Connection failed:", e)
+            return False
+        else:
+            print("Connection established to writing port")
+            return True
 
 
 if __name__ == '__main__':

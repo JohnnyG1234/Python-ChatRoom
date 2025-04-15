@@ -18,8 +18,6 @@ class TestScreenName(unittest.TestCase):
     def test_valid_name_2(self):
         self.assertTrue(test_client.check_screen_name("XX_K3WLDUD3_XX"))
 
-
-
 class TestConnection(unittest.TestCase):
     def test_connection(self):
         self.assertTrue(test_client.is_connected)

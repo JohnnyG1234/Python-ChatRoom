@@ -17,6 +17,7 @@ def recv_all(length, sock):
         return data
 
 def  recv_message(sock):
+        """Recv a message on a given socket and returns a python string"""
         length_bytes = sock.recv(4)
         length = int.from_bytes(length_bytes, "big")
         data = recv_all(length, sock)
@@ -24,6 +25,7 @@ def  recv_message(sock):
         return json.loads(data_decoded)
 
 def  send_message(sock, msg):
+      """Sends a properly encoded/formated message based off given msg"""
       json_msg = json.dumps(msg)
 
       encoded = json_msg.encode('utf-8')
@@ -33,4 +35,6 @@ def  send_message(sock, msg):
       message = size_bytes + encoded
       
       sock.sendall(message)
+
+
       
