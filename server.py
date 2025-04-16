@@ -83,17 +83,10 @@ class ChatServer:
 
             message = recv_message(client_sock)
             self.client_list.append((message[1], client_sock))
-
             send_back = message[1] + USER_JOINED
-            json_back = json.dumps(send_back)
-            encoded_back = json_back.encode('utf-8')
-
-            length = len(encoded_back)
-            length_bytes = length.to_bytes(4, 'big')
-            new_user_message = length_bytes + encoded_back
             
             for clients in self.client_list:
-                clients[1].sendall(new_user_message)
+                send_message(clients[1], send_back)
                 
         self.writing_sock.close()
 

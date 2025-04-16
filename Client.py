@@ -138,12 +138,6 @@ class ChatClient:
         
         return  True
 
-    def unpack_message(self, message):
-        """This will decode and make a json message into a python object"""
-
-        message_decoded = message.decode('utf-8')
-        message_loads = json.loads(message_decoded)
-        return message_loads
 
     @staticmethod
     def connect(sock, host, port) -> bool:
