@@ -71,18 +71,7 @@ class ChatServer:
                 self.exit(client_sock, message)
 
             elif message[0] == "PRIVATE":
-                send_back = message[1] + " (private): " + message[2]
-                json_back = json.dumps(send_back)
-                encoded = json_back.encode('utf-8')
-
-                length = len(encoded)
-                length_bytes = length.to_bytes(4, 'big')
-                final = length_bytes + encoded
-
-                for clients in self.client_list:
-                    if clients[0] == message[3]:
-                        clients[1].sendall(final)
-                        break
+                self.private_message(message)
 
         client_sock.close()
 
@@ -110,20 +99,37 @@ class ChatServer:
 
     
     def shutdown(self):
+        """Stops all sockets from running"""
         self._should_run = False
 
     def broadcast(self, message):
-        send_back = message[1] + ": " + message[2]
+        """Sends a message to all clients"""
+        username = message[1]
+        msg = message[2]
+
+        send_back = username + ": " + msg
 
         for clients in self.client_list:
             send_message(clients[1], send_back)
     
     def exit(self, sock, message):
+        """Lets one client exit the program"""
         username = message[1]
         
         sock.close()
         client_to_close = self.find_client(username)[1]
         send_message(client_to_close, "Closing")
+    
+    def private_message(self, message):
+        """Sends a private message to specified username"""
+        username = message[1]
+        msg = message[2]
+
+        target_username = message[3]
+        target_client = self.find_client(target_username)[1]
+
+        send_back = username + " (private): " + msg
+        send_message(target_client, send_back)
 
     def find_client(self, username): # returns a client
         for client in self.client_list:
