@@ -66,20 +66,10 @@ class ChatServer:
 
             if message[0] == "BROADCAST":
                 self.broadcast(message)
-            elif message[0] == "EXIT":
-                send_back = "Closing"
-                json_back = json.dumps(send_back)
-                encoded = json_back.encode('utf-8')
 
-                length = len(encoded)
-                length_bytes = length.to_bytes(4, 'big')
-                final = length_bytes + encoded
-                client_sock.close()
-                for clients in self.client_list:
-                    if clients[0] == message[1]:
-                        clients[1].sendall(final)
-                        self._should_run = False
-                        break
+            elif message[0] == "EXIT":
+                self.exit(client_sock, message)
+
             elif message[0] == "PRIVATE":
                 send_back = message[1] + " (private): " + message[2]
                 json_back = json.dumps(send_back)
@@ -129,16 +119,17 @@ class ChatServer:
             send_message(clients[1], send_back)
     
     def exit(self, sock, message):
-        send_back = "Closing"
         username = message[1]
         
         sock.close()
-        client_to_close = self.find_client(username)
-        for clients in self.client_list:
-            if clients[0] == username:
-                send_message(clients[1], send_back)
-                self._should_run = False
-                break
+        client_to_close = self.find_client(username)[1]
+        send_message(client_to_close, "Closing")
+
+    def find_client(self, username): # returns a client
+        for client in self.client_list:
+            if client[0] == username:
+                return client
+        return None
 
     @staticmethod
     def bind(sock, host, port) -> bool:
@@ -150,12 +141,6 @@ class ChatServer:
             return False
 
         return True
-    
-
-    def find_client(self, username): # returns a client
-        for client in self.client_list:
-            if client[0] == username:
-                return client
                 
 
 

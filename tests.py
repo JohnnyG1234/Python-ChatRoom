@@ -6,9 +6,10 @@ import helperfunctions
 
 HOST = 'localhost'
 PORT = 1050
+TEST_USER = "test"
 
 test_server = server.ChatServer()
-test_client = client.ChatClient("test")
+test_client = client.ChatClient(TEST_USER)
 
 class TestScreenName(unittest.TestCase):
     def test_invalid_name_1(self):
@@ -36,7 +37,10 @@ class TestConnection(unittest.TestCase):
 
         self.test_client_sock.close()
         self.test_server_sock.close()
-    
+
+class TestFindClient(unittest.TestCase):
+    def test_find_client(self):
+        self.assertTrue(test_server.find_client(TEST_USER))
 
         
 

@@ -31,6 +31,8 @@ class ChatClient:
 
         if not screen_name:
             self.get_screen_name()
+        else:
+            self.screen_name = screen_name
             
         self.receiving_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sending_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
