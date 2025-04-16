@@ -16,7 +16,7 @@ class ChatServer:
 
     reading_sock = socket.socket()
     writing_sock = socket.socket()
-    client_list = []
+    client_list = [] # List of tuples each client is a tuple client[0] == username client[1] == socket associated with that client
     _should_run = True
 
     def __init__(self):
@@ -57,7 +57,12 @@ class ChatServer:
         """
 
         while self._should_run:
-            message = recv_message(client_sock)
+            """
+            message[0] = message type 
+            message[1] = username
+            message[2] = message content
+            """
+            message = recv_message(client_sock) 
 
             if message[0] == "BROADCAST":
                 self.broadcast(message)
@@ -73,8 +78,8 @@ class ChatServer:
                 for clients in self.client_list:
                     if clients[0] == message[1]:
                         clients[1].sendall(final)
+                        self._should_run = False
                         break
-                return
             elif message[0] == "PRIVATE":
                 send_back = message[1] + " (private): " + message[2]
                 json_back = json.dumps(send_back)
@@ -122,6 +127,18 @@ class ChatServer:
 
         for clients in self.client_list:
             send_message(clients[1], send_back)
+    
+    def exit(self, sock, message):
+        send_back = "Closing"
+        username = message[1]
+        
+        sock.close()
+        client_to_close = self.find_client(username)
+        for clients in self.client_list:
+            if clients[0] == username:
+                send_message(clients[1], send_back)
+                self._should_run = False
+                break
 
     @staticmethod
     def bind(sock, host, port) -> bool:
@@ -133,7 +150,13 @@ class ChatServer:
             return False
 
         return True
+    
 
+    def find_client(self, username): # returns a client
+        for client in self.client_list:
+            if client[0] == username:
+                return client
+                
 
 
 

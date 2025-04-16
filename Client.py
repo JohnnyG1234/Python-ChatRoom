@@ -143,20 +143,6 @@ class ChatClient:
         message_loads = json.loads(message_decoded)
         return message_loads
 
-    def recv_all(self, length, client_sock):
-        """this function receives the amount of data given"""
-
-        data = b''
-        while len(data) < length:
-            more = client_sock.recv(length - len(data))
-            if not more:
-                return_length = len(ERROR.encode("utf-8"))
-                error_message = return_length.to_bytes(4, "big") + ERROR.encode("utf-8")
-                client_sock.sendall(error_message)
-                raise EOFError
-            data += more
-        return data
-
     @staticmethod
     def connect(sock, host, port) -> bool:
         """Connects a socket to another socket, returns true on success and False on a failure"""
