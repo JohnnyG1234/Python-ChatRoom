@@ -58,23 +58,7 @@ class ChatClient:
                 continue
 
             if message_input[0] == '@':
-                name = message_input.split(" ", 1)
-                screen_name = name[0]
-                try:
-                    message_input = name[1]
-                except IndexError:
-                    print("No message")
-                    continue
-                screen_name = screen_name[1:]
-                list = [PRIVATE, self.screen_name, message_input, screen_name]
-
-                json_list = json.dumps(list)
-                encoded = json_list.encode('utf-8')
-
-                size = len(encoded)
-                byte_size = size.to_bytes(4, 'big')
-                message = byte_size + encoded
-                self.sending_sock.sendall(message)
+                self.private_msg(message_input)
 
             elif message_input == "Exit" or message_input == "exit":
                 list = [EXIT, self.screen_name]
@@ -137,6 +121,20 @@ class ChatClient:
             return False
         
         return  True
+    
+    def private_msg(self, message_input):
+        """Sends a private message request to the server, makes sure there is a message and a username before sending"""
+        name = message_input.split(" ", 1)
+        screen_name = name[0]
+        try:
+            message_input = name[1]
+        except IndexError:
+            print("No message")
+            return
+        screen_name = screen_name[1:]
+        list = [PRIVATE, self.screen_name, message_input, screen_name]
+
+        send_message(self.sending_sock, list)
 
 
     @staticmethod
