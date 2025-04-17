@@ -64,15 +64,7 @@ class ChatClient:
                 self.exit()
                 return
             else:
-                list = [BROADCAST, self.screen_name, message_input]
-
-                json_list = json.dumps(list)
-                encoded = json_list.encode('utf-8')
-
-                size = len(encoded)
-                byte_size = size.to_bytes(4, 'big')
-                message = byte_size + encoded
-                self.sending_sock.sendall(message)
+                self.broadcast_msg(message_input)
 
 
     def receiving(self):
@@ -130,6 +122,11 @@ class ChatClient:
     
     def exit(self):
         list = [EXIT, self.screen_name]
+        send_message(self.sending_sock, list)
+    
+    def broadcast_msg(self, message_input):
+        list = [BROADCAST, self.screen_name, message_input]
+
         send_message(self.sending_sock, list)
 
 
