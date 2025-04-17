@@ -61,15 +61,7 @@ class ChatClient:
                 self.private_msg(message_input)
 
             elif message_input == "Exit" or message_input == "exit":
-                list = [EXIT, self.screen_name]
-
-                json_list = json.dumps(list)
-                encoded = json_list.encode('utf-8')
-
-                size = len(encoded)
-                byte_size = size.to_bytes(4, 'big')
-                message = byte_size + encoded
-                self.sending_sock.sendall(message)
+                self.exit()
                 return
             else:
                 list = [BROADCAST, self.screen_name, message_input]
@@ -134,6 +126,10 @@ class ChatClient:
         screen_name = screen_name[1:]
         list = [PRIVATE, self.screen_name, message_input, screen_name]
 
+        send_message(self.sending_sock, list)
+    
+    def exit(self):
+        list = [EXIT, self.screen_name]
         send_message(self.sending_sock, list)
 
 
