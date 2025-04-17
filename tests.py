@@ -37,6 +37,10 @@ class TestConnection(unittest.TestCase):
 
         self.test_client_sock.close()
         self.test_server_sock.close()
+    
+    def test_disconnect(self):
+        test_client.exit()
+        self.assertFalse(test_client.is_connected)
 
 class TestFindClient(unittest.TestCase):
     def test_find_client(self):

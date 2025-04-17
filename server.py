@@ -62,13 +62,18 @@ class ChatServer:
             message[1] = username
             message[2] = message content
             """
-            message = recv_message(client_sock) 
+            try:
+                message = recv_message(client_sock) 
+            except:
+                print("Client closed connection")
+                break
 
             if message[0] == "BROADCAST":
                 self.broadcast(message)
 
             elif message[0] == "EXIT":
                 self.exit(client_sock, message)
+                break
 
             elif message[0] == "PRIVATE":
                 self.private_message(message)

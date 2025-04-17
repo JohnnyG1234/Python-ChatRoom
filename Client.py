@@ -123,6 +123,7 @@ class ChatClient:
     def exit(self):
         list = [EXIT, self.screen_name]
         send_message(self.sending_sock, list)
+        self.is_connected = False
     
     def broadcast_msg(self, message_input):
         list = [BROADCAST, self.screen_name, message_input]
