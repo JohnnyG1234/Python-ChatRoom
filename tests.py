@@ -1,5 +1,5 @@
 import unittest
-import client
+import Client as client
 import server
 import socket
 import helperfunctions
@@ -23,6 +23,10 @@ class TestScreenName(unittest.TestCase):
     
     def test_valid_name_2(self):
         self.assertTrue(test_client.check_screen_name("XX_K3WLDUD3_XX"))
+    
+    def test_find_all_userneames(self):
+        test_usernames = ['t', 'test']
+        self.assertEqual(test_usernames, test_server.get_all_usernames())
 
 class TestFindClient(unittest.TestCase):
     def test_find_client(self):
