@@ -136,6 +136,7 @@ class ChatServer:
         return None
     
     def get_all_usernames(self):
+        """Gets all the current client usernames"""
         usernames = []
         for client in self.client_list:
             usernames.append(client[0])
