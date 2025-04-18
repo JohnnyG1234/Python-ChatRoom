@@ -1,5 +1,21 @@
 To run the program simply run the server first, then run as many clients as you want
 
+run the server with 
+
+```
+python server.py
+```
+
+run the client  with
+
+```
+python Client.py
+```
+
+and run tests with
+```
+python tests.py
+```
 
 
 You don't have to have any inputs on the server end
