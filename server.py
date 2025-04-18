@@ -134,6 +134,13 @@ class ChatServer:
             if client[0] == username:
                 return client
         return None
+    
+    def get_all_usernames(self):
+        usernames = []
+        for client in self.client_list:
+            usernames.append(client[0])
+        
+        return usernames
 
     @staticmethod
     def bind(sock, host, port) -> bool:
