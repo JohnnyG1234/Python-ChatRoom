@@ -12,6 +12,7 @@ TEST_USER = "test"
 test_server = server.ChatServer()
 test_client = client.ChatClient("t")
 
+
 class TestScreenName(unittest.TestCase):
     def test_invalid_name_1(self):
         self.assertFalse(test_client.check_screen_name("Jimmy Dean"))
@@ -25,16 +26,14 @@ class TestScreenName(unittest.TestCase):
     def test_valid_name_2(self):
         self.assertTrue(test_client.check_screen_name("XX_K3WLDUD3_XX"))
     
-    
-class TestFindClient(unittest.TestCase):
-    new_client = client.ChatClient(TEST_USER)
-
-    def test_find_client(self):
-        self.assertTrue(test_server.find_client(TEST_USER))
-
     def test_find_all_userneames(self):
-        test_usernames = ["t"]
+        test_usernames = ['t', 'test']
         self.assertEqual(test_usernames, test_server.get_all_usernames())
+
+class TestFindClient(unittest.TestCase):
+    def test_find_client(self):
+        new_client = client.ChatClient(TEST_USER)
+        self.assertTrue(test_server.find_client(TEST_USER))
 
 class TestConnection(unittest.TestCase):
     test_server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
