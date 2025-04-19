@@ -19,6 +19,12 @@ class ChatServer:
     client_list = [] # List of tuples each client is a tuple client[0] == username client[1] == socket associated with that client
     _should_run = True
 
+    writing_thread = None
+    reading_thread = None
+
+    def __del__(self):
+        self.shutdown()
+
     def __init__(self):
         """This funciton will make an instance of the server
 
@@ -35,8 +41,8 @@ class ChatServer:
             return
         
 
-        threading.Thread(target=self.writing, args=()).start()
-        threading.Thread(target=self.reading, args=()).start()
+        self.writing_thread = threading.Thread(target=self.writing, args=()).start()
+        self.reading_thread = threading.Thread(target=self.reading, args=()).start()
 
         print(f'Server running at {HOST}')
 
@@ -48,6 +54,7 @@ class ChatServer:
             threading.Thread(target=self.handle_chat, args=(client_sock,)).start()
 
         self.reading_sock.close()
+        self.reading_thread.join() 
 
     def handle_chat(self, client_sock):
         """This will handle a chat from one client
@@ -94,6 +101,7 @@ class ChatServer:
                 send_message(clients[1], send_back)
                 
         self.writing_sock.close()
+        self.writing_thread
 
     
     def shutdown(self):
