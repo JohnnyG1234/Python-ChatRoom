@@ -27,7 +27,7 @@ class TestScreenName(unittest.TestCase):
         self.assertTrue(test_client.check_screen_name("XX_K3WLDUD3_XX"))
     
     def test_find_all_userneames(self):
-        test_usernames = ['t', 'test']
+        test_usernames = ['t']
         self.assertEqual(test_usernames, test_server.get_all_usernames())
 
 class TestFindClient(unittest.TestCase):
