@@ -34,6 +34,7 @@ class TestFindClient(unittest.TestCase):
     def test_find_client(self):
         new_client = client.ChatClient(TEST_USER)
         self.assertTrue(test_server.find_client(TEST_USER))
+        new_client.exit()
 
 class TestConnection(unittest.TestCase):
     test_server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -52,6 +53,15 @@ class TestConnection(unittest.TestCase):
     def test_disconnect(self):
         test_client.exit()
         self.assertFalse(test_client.is_connected)
+
+def pytest_sessionfinish(session, exitstatus):
+    """
+    Called after whole test run finished, right before
+    returning the exit status to the system.
+    """
+    test_client.exit()
+    test_server.shutdown()
+
 
         
 
