@@ -121,11 +121,13 @@ class ChatClient:
         send_message(self.sending_sock, list)
     
     def exit(self):
+        """Tells the server the client is leaving"""
         list = [EXIT, self.screen_name]
         send_message(self.sending_sock, list)
         self.is_connected = False
     
     def broadcast_msg(self, message_input):
+        """sends a message to all other users"""
         list = [BROADCAST, self.screen_name, message_input]
 
         send_message(self.sending_sock, list)
